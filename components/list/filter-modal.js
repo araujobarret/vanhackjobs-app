@@ -1,27 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Button, Modal, View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {
-  rowContainer,
-  listItemSkill,
-  modalContainer,
-  modalTitle,
-  modalIcon,
-  modalLocation,
-  modalLocationSubText,
-  modalLocationText,
-  modalDescription,
-  modalSkills,
-  modalSkillsTitle,
-  modalSkill,
-  modalButtons,
-  modalCloseButton,
-  modalSaveButton,
-  modalCancelText,
-  modalSaveText } from '../styles/styles';
-
-export default class JobModal extends React.Component {
+class FilterModal extends React.Component {
 
   constructor(props) {
     super(props);
@@ -99,3 +81,12 @@ export default class JobModal extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (store) => {
+  return {
+    jobs: store.jobs,
+    filter: store.filter
+  }
+}
+
+export default connect(mapStateToProps)(List);

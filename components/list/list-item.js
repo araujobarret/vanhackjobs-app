@@ -2,6 +2,7 @@ import React from 'react';
 import { Animated, Easing, Modal, View, Text, StyleSheet, TouchableOpacity, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import JobModal from './job-modal';
 import {
   rowContainer,
   listItem,
@@ -76,26 +77,8 @@ export default class ListItem extends React.Component {
     return skills;
   }
 
-  _renderModalSkills() {
-    let skills = [];
-
-    for(let skill of this.state.skills) {
-      skills.push(<Text key={this.state._id+"modal"+skill} style={[listItemSkill, modalSkill]}>{skill}</Text>);
-    }
-
-    return skills;
-  }
-
   openModal() {
     this.setState({modalVisible:true});
-  }
-
-  closeModal() {
-    this.setState({modalVisible:false});
-  }
-
-  saveJob() {
-    this.setState({isSaved: !this.state.isSaved});
   }
 
   componentDidMount(){
@@ -113,40 +96,7 @@ export default class ListItem extends React.Component {
     return (
       <Animated.View style={[listItem, {opacity: fadeAnim}]}>
 
-        <Modal
-          visible={this.state.modalVisible}
-          animationType={'slide'}
-          onRequestClose={() => this.closeModal()}>
-          <View style={modalContainer}>
-            <Text style={modalTitle}>{this.state.title}</Text>
-            <View style={[rowContainer, modalIcon]}>
-              <Icon name="map-marker" size={40} color="#51abe4" style={{textAlignVertical: "center"}}/>
-              <View style={modalLocation}>
-                <Text style={modalLocationSubText}>Location</Text>
-                <Text style={modalLocationText}>{this.state.location.country}, {this.state.location.city}</Text>
-              </View>
-            </View>
-            <Text style={modalDescription}>Description: {this.state.fullDescription}</Text>
-            <Text style={modalSkillsTitle}>Required Skills</Text>
-            <View style={modalSkills}>
-              {this._renderModalSkills()}
-            </View>
-            <View style={modalButtons}>
-              <TouchableHighlight
-                onPress={() => this.closeModal()}
-                style={modalCloseButton}
-                underlayColor="white">
-                <Text  style={modalCancelText}>CLOSE</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
-                onPress={() => this.saveJob()}
-                style={modalSaveButton}
-                underlayColor="white">
-                <Text style={modalSaveText}>{ this.state.isSaved ? "SAVED" : "SAVE"}</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
+        <JobModal {...this.state} />
 
         <TouchableOpacity onPress={ () => this.openModal()}>
           <View style={rowContainer}>
