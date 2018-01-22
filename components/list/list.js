@@ -12,11 +12,13 @@ class List extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log("Props", props);
 
     this.state = {
       page: -1,
-      jobs: []
+      jobs: [],
+      skills: [],
+      city: null,
+      country: null
     };
   }
 
@@ -44,28 +46,28 @@ class List extends React.Component {
   }
 
   updateItems() {
-    console.log("PROPS", this.props);
     let {dispatch} = this.props;
-    this.setState({page: ++this.state.page}, () => {dispatch(startGetJobs(this.state.page));});
+    console.log("Updating...");
+    this.setState({page: ++this.state.page}, () => {
+      dispatch(startGetJobs(this.state.page));
+    });
   }
 
   render() {
-    if(!this.isLoading) {
-      return (
-        <View style={container}>
-          <FlatList
-            styles={list}
-            data={this.state.jobs}
-            keyExtractor={this._keyExtractor}
-            renderItem={this._renderItem}
-            onEndReached={() => {this.updateItems()}}
-            />
-        </View>
-      );
-    }
-    else {
-      return <Loading />
-    }
+    return (
+      <View style={container}>
+        <FlatList
+          styles={list}
+          data={this.state.jobs}
+          keyExtractor={this._keyExtractor}
+          renderItem={this._renderItem}
+          onRefresh={() => console.log("Refreshed")}
+          refreshing={this.isLoading}
+          onEndReached={() => this.updateItems()}
+          onEndThreshold={0}
+          />
+      </View>
+    );
   }
 }
 
