@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { HTTP_HEADER, API_GET_JOBS_SKILLS, API_GET_JOBS_COUNTRIES, API_GET_JOBS_CITIES } from '../constants/api';
-import { GET_COUNTRIES, GET_CITIES, GET_SKILLS } from '../constants/actionTypes';
+import { GET_COUNTRIES, GET_CITIES, GET_SKILLS, SELECT_SKILL, SELECT_COUNTRY, SELECT_CITY, CLEAR_JOBS_FILTER } from '../constants/actionTypes';
 
 // Error handling
 export const handleError = (error) => {
@@ -30,15 +30,53 @@ export const startGetSkills = () => {
       return dispatch(setSkills(res.data));
     }).catch((e) => console.error(e));
   };
-}
+};
 
-// Set countries
+export const selectSkill = (skill) => {
+  return {
+    type: SELECT_SKILL,
+    skill
+  }
+};
+
+export const selectCountry = (country, cities) => {
+  return {
+    type: SELECT_COUNTRY,
+    selectedCountry: country,
+    cities
+  }
+};
+
 export const setCountries = (countries) => {
   return {
     type: GET_COUNTRIES,
     countries
-  };
+  }
 };
+
+export const selectCity = (city) => {
+  return {
+    type: SELECT_CITY,
+    selectedCity: city == "choose" ? null : city
+  }
+};
+
+// Start the get skills process
+export const startSelectCountry = (country) => {
+  return (dispatch) => {
+    axios({
+      method: "get",
+      url: API_GET_JOBS_CITIES,
+      params: {
+        country
+      },
+      headers: HTTP_HEADER
+    })
+    .then((res) => {
+      return dispatch(selectCountry(country, res.data));
+    }).catch((e) => console.error(e));
+  };
+}
 
 // Start the get skills process
 export const startGetCountries = () => {
@@ -54,27 +92,8 @@ export const startGetCountries = () => {
   };
 }
 
-// Set countries
-export const setCities = (cities) => {
+export const clearFilterData = () => {
   return {
-    type: GET_CITIES,
-    cities
-  };
-};
-
-// Start the get skills process
-export const startGetCities = (country) => {
-  return (dispatch) => {
-    axios({
-      method: "get",
-      url: API_GET_JOBS_CITIES,
-      params: {
-        country
-      },
-      headers: HTTP_HEADER
-    })
-    .then((res) => {      
-      return dispatch(setCities(res.data));
-    }).catch((e) => console.error(e));
-  };
+    type: CLEAR_JOBS_FILTER
+  }
 }

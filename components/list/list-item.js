@@ -43,7 +43,7 @@ export default class ListItem extends React.Component {
       skills: props.skills,
       location: props.location,
       fadeAnim: new Animated.Value(0),
-      modalVisible: false,
+      modalItemVisible: false,
       isSaved: props.isSaved ? props.isSaved : false
     };
   }
@@ -77,8 +77,8 @@ export default class ListItem extends React.Component {
     return skills;
   }
 
-  openModal() {
-    this.setState({modalVisible:true});
+  openItemModal() {
+    this.setState({modalItemVisible:true});
   }
 
   componentDidMount(){

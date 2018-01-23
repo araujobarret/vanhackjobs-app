@@ -34,7 +34,7 @@ export default class JobModal extends React.Component {
       date: props.date,
       skills: props.skills,
       location: props.location,
-      modalVisible: props.modalVisible
+      modalItemVisible: props.modalItemVisible
     };
   }
 
@@ -47,9 +47,9 @@ export default class JobModal extends React.Component {
 
     return skills;
   }
-
+  
   componentWillReceiveProps(nextProps){
-    this.setState({modalVisible: nextProps.modalVisible});
+    this.setState({modalItemVisible: nextProps.modalItemVisible});
   }
 
   saveJob() {
@@ -57,13 +57,13 @@ export default class JobModal extends React.Component {
   }
 
   closeModal() {
-    this.setState({modalVisible:false});
+    this.setState({modalItemVisible:false});
   }
 
   render() {
     return (
       <Modal
-        visible={this.state.modalVisible}
+        visible={this.state.modalItemVisible}
         animationType={'slide'}
         onRequestClose={() => this.closeModal()}>
         <View style={modalContainer}>

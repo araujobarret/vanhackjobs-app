@@ -11,24 +11,42 @@ export const handleError = (error) => {
 };
 
 // Set jobs
-export const setJobs = (jobs) => {
+export const setJobs = (page, jobs) => {
   return {
     type: GET_JOBS,
-    jobs
+    jobs,
+    page
   };
 };
 
 // Start the get jobs process
-export const startGetJobs = (page) => {
+export const startGetJobs = (page, filter) => {
+  let filterObj = {};
+
+  if(filter != null) {
+    if(filter.selectedCity) {
+      filterObj['location.city'] = filter.selectedCity;
+    }
+    if(filter.selectedCountry) {
+      filterObj['location.country'] = filter.selectedCountry;
+    }
+    if(filter.selectedSkills.length > 0) {
+      filterObj['skills'] = filter.selectedSkills;
+    }
+  }
+
   return (dispatch) => {
     axios({
       method: "post",
       url: API_GET_JOBS,
-      data: {page},
+      data: {
+        page,
+        ...filterObj
+      },
       headers: HTTP_HEADER
     })
     .then((res) => {
-      return dispatch(setJobs(res.data));
+      return dispatch(setJobs(page, res.data));
     }).catch((e) => console.error(e));
   };
 }

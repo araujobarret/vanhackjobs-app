@@ -4,7 +4,7 @@ import { GET_JOBS } from '../constants/actionTypes';
 
 // Reducer to control the jobs, page, job and error state
 const initialState = {
-  job: null,
+  page: 0,
   jobs: null,
   error: ''
 }
@@ -13,9 +13,9 @@ const jobs = (state = initialState, action) => {
   switch(action.type){
     // Get jobs method
     case GET_JOBS:
-      let jobs = state.jobs ? state.jobs : [];
+      let jobs = action.page != 0 ? state.jobs : [];
       jobs.push(...action.jobs);
-      return Object.assign({}, state, { jobs: jobs });
+      return Object.assign({}, state, { jobs, page: ++action.page });
       break;
     default:
       return state;
