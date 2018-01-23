@@ -14,16 +14,14 @@ export const AppStackNavigator = StackNavigator(
   {
     headerMode: 'float',
     navigationOptions: ({navigation}) => ({
-      headerStyle: { backgroundColor: 'white'},
+      headerStyle: { backgroundColor: 'white' },
       headerTitleStyle: { alignSelf: 'center' },
       title: <Text style={{color: "#595a5a"}}>Jobs</Text>,
       headerLeft: <TouchableHighlight underlayColor="white" onPress={ () =>  {}}>
         <Image style={{width: 48, height: 48}} resizeMode="stretch"
           source={require('../assets/images/vanhackicon.jpg')}/>
         </TouchableHighlight>,
-      headerRight: <TouchableHighlight underlayColor="white" onPress={ () => {}}>
-          <Icon style={{width: 48, height: 48, textAlign: "center", textAlignVertical: "center"}} size={24} name="heart" color="#51abe4" />
-        </TouchableHighlight>
+      headerRight: <View style={{width: 48, height: 48}}/>
     })
   }
 );

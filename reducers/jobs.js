@@ -5,7 +5,7 @@ import { GET_JOBS } from '../constants/actionTypes';
 // Reducer to control the jobs, page, job and error state
 const initialState = {
   page: 0,
-  jobs: null,
+  jobs: [],
   error: ''
 }
 

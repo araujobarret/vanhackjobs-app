@@ -2,24 +2,9 @@ import React from 'react';
 import { Button, Modal, View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {
-  rowContainer,
-  listItemSkill,
-  modalContainer,
-  modalTitle,
-  modalIcon,
-  modalLocation,
-  modalLocationSubText,
-  modalLocationText,
-  modalDescription,
-  modalSkills,
-  modalSkillsTitle,
-  modalSkill,
-  modalButtons,
-  modalCloseButton,
-  modalSaveButton,
-  modalCancelText,
-  modalSaveText } from '../styles/styles';
+import { rowContainer } from '../styles/styles';
+import { listItems } from '../styles/listsItems.styles';
+import { modalJob } from '../styles/modalJob.styles';
 
 export default class JobModal extends React.Component {
 
@@ -42,22 +27,18 @@ export default class JobModal extends React.Component {
     let skills = [];
 
     for(let skill of this.state.skills) {
-      skills.push(<Text key={this.state._id+"modal"+skill} style={[listItemSkill, modalSkill]}>{skill}</Text>);
+      skills.push(<Text key={this.state._id+"modal"+skill} style={[listItems.listItemSkill, modalJob.modalSkill]}>{skill}</Text>);
     }
 
     return skills;
   }
-  
+
   componentWillReceiveProps(nextProps){
     this.setState({modalItemVisible: nextProps.modalItemVisible});
   }
 
-  saveJob() {
-    this.setState({isSaved: !this.state.isSaved});
-  }
-
   closeModal() {
-    this.setState({modalItemVisible:false});
+    this.setState({modalItemVisible:false}, () => { this.props.onClose(true)});
   }
 
   render() {
@@ -66,32 +47,26 @@ export default class JobModal extends React.Component {
         visible={this.state.modalItemVisible}
         animationType={'slide'}
         onRequestClose={() => this.closeModal()}>
-        <View style={modalContainer}>
-          <Text style={modalTitle}>{this.state.title}</Text>
-          <View style={[rowContainer, modalIcon]}>
+        <View style={modalJob.modalContainer}>
+          <Text style={modalJob.modalTitle}>{this.state.title}</Text>
+          <View style={[rowContainer, modalJob.modalIcon]}>
             <Icon name="map-marker" size={40} color="#51abe4" style={{textAlignVertical: "center"}}/>
-            <View style={modalLocation}>
-              <Text style={modalLocationSubText}>Location</Text>
-              <Text style={modalLocationText}>{this.state.location.country}, {this.state.location.city}</Text>
+            <View style={modalJob.modalLocation}>
+              <Text style={modalJob.modalLocationSubText}>Location</Text>
+              <Text style={modalJob.modalLocationText}>{this.state.location.country}, {this.state.location.city}</Text>
             </View>
           </View>
-          <Text style={modalDescription}>Description: {this.state.fullDescription}</Text>
-          <Text style={modalSkillsTitle}>Required Skills</Text>
-          <View style={modalSkills}>
+          <Text style={modalJob.modalDescription}>Description: {this.state.fullDescription}</Text>
+          <Text style={modalJob.modalSkillsTitle}>Required Skills</Text>
+          <View style={modalJob.modalSkills}>
             {this._renderModalSkills()}
           </View>
-          <View style={modalButtons}>
+          <View style={modalJob.modalButtons}>
             <TouchableHighlight
               onPress={() => this.closeModal()}
-              style={modalCloseButton}
+              style={modalJob.modalCloseButton}
               underlayColor="white">
-              <Text  style={modalCancelText}>CLOSE</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              onPress={() => this.saveJob()}
-              style={modalSaveButton}
-              underlayColor="white">
-              <Text style={modalSaveText}>{ this.state.isSaved ? "SAVED" : "SAVE"}</Text>
+              <Text  style={modalJob.modalCancelText}>CLOSE</Text>
             </TouchableHighlight>
           </View>
         </View>

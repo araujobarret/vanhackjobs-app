@@ -4,8 +4,10 @@ import { Button, Modal, Picker, View, Text, ScrollView, StyleSheet, TouchableHig
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { container, list} from '../styles/styles';
+import { modalFilter } from '../styles/modalFilter.styles';
+
 import { startGetJobs } from '../../actions/jobs';
-import { startGetSkills, startGetCountries, startSelectCountry, selectCity, clearFilterData } from '../../actions/filter';
+import { startGetSkills, selectSkill, startGetCountries, startSelectCountry, selectCity, clearFilterData } from '../../actions/filter';
 
 class FilterModal extends React.Component {
 
@@ -14,18 +16,20 @@ class FilterModal extends React.Component {
 
     this.state = {
       ...props.filter,
-      jobs: props.jobs,
-      modalVisible: props.modalVisible
+      jobs: props.jobs
     };
   }
 
+  // Render the skills array, the selected ones will have a different style
   _renderSkills() {
     let skills = [];
     for(let skill of this.state.skills) {
       skills.push(
         <Text
-          style={{backgroundColor: "lightgreen", color: "white", fontWeight: "bold", margin: 4, padding: 4}}
-          onPress={(text) => console.log("Text value:", text)}
+          style={
+            this.state.selectedSkills.indexOf(skill._id) == -1 ? modalFilter.skillNormal : modalFilter.skillSelected
+          }
+          onPress={() => this.addSkill(skill._id)}
           key={"filter_text_"+skill._id}>
           {skill._id}
         </Text>
@@ -34,6 +38,7 @@ class FilterModal extends React.Component {
     return skills;
   }
 
+  // Render the pickers items, for countries and cities
   _renderPickerItem(type) {
     let pickers = [];
     switch(type){
@@ -57,9 +62,9 @@ class FilterModal extends React.Component {
     return pickers;
   }
 
+
   componentWillReceiveProps(nextProps){
-    console.log("NextProps", nextProps);
-    //this.setState({...nextProps.filter, jobs: nextProps.jobs, modalVisible: this.props.modalVisible});
+    this.setState({...nextProps.filter, jobs: nextProps.jobs});
   }
 
   componentDidMount() {
@@ -69,15 +74,24 @@ class FilterModal extends React.Component {
   }
 
   closeModal() {
-    this.setState({modalVisible: false});
+    this.props.onCloseFilter(true);
   }
 
+  // Dispatch the action to clear the filters
   clearFilters() {
     let {dispatch} = this.props;
+    dispatch(startGetJobs(0, null));
     dispatch(clearFilterData());
     this.closeModal();
   }
 
+  // Add a skill to the selected state array
+  addSkill(skill) {
+    let {dispatch} = this.props;
+    dispatch(selectSkill(skill));
+  }
+
+  // Change the selected country and get dispatch the request to get the cities of the country
   changeCountry(value){
     let {dispatch} = this.props;
     if(value != "choose") {
@@ -88,27 +102,30 @@ class FilterModal extends React.Component {
     }
   }
 
+  // Change the selected city
   changeCity(value){
     let {dispatch} = this.props;
     dispatch(selectCity(value));
   }
 
+  // Dispatch the action to do the query with filters
   filter() {
     let {dispatch} = this.props;
     dispatch(startGetJobs(0, this.state));
     this.closeModal();
   }
 
+  // Render the modal
   render() {
     return (
       <Modal
-          visible={this.state.modalVisible}
+          visible={this.props.modalVisible}
           animationType={'fade'}
           transparent={true}
           onRequestClose={() => this.closeModal()}>
-          <View style={{ borderColor: "#cecece", borderWidth: 1, backgroundColor: "#f2f6f9", flex: 1, alignSelf: "stretch", marginVertical: 80, marginHorizontal: 20, borderRadius: 6, padding: 16}}>
-            <View style={{ flexDirection: "row", borderBottomWidth: 2, borderColor: "#51abe4"}}>
-              <Text style={{flex: 1, textAlignVertical: "center", fontWeight: "bold"}}>Country: </Text>
+          <View style={modalFilter.modalContainer}>
+            <View style={modalFilter.pickerContainer}>
+              <Text style={modalFilter.pickerText}>Country: </Text>
               <Picker mode={'dialog'} style={{flex: 5}}
                 selectedValue={this.state.selectedCountry}
                 onValueChange={(value) => this.changeCountry(value)}>
@@ -116,8 +133,8 @@ class FilterModal extends React.Component {
               </Picker>
             </View>
 
-            <View style={{ flexDirection: "row", borderBottomWidth: 2, borderColor: "#51abe4"}}>
-              <Text style={{flex: 1, textAlignVertical: "center", fontWeight: "bold"}}>City: </Text>
+            <View style={modalFilter.pickerContainer}>
+              <Text style={modalFilter.pickerText}>City: </Text>
               <Picker mode={'dialog'} style={{flex: 5}}
                 selectedValue={this.state.selectedCity}
                 onValueChange={(value) => this.changeCity(value)}>
@@ -125,24 +142,24 @@ class FilterModal extends React.Component {
               </Picker>
             </View>
 
-            <ScrollView style={{marginTop: 8}}>
-              <Text style={{textAlignVertical: "center", fontWeight: "bold"}}>Skills: </Text>
-              <View  style={{ flexDirection: "row", flexWrap: "wrap"}}>
+            <ScrollView style={modalFilter.skillsContainer}>
+              <Text style={modalFilter.skillsTitle}>Skills: </Text>
+              <View  style={modalFilter.skillsArray}>
                 {this._renderSkills()}
               </View>
             </ScrollView>
 
-            <View style={{position: "absolute", right: 0, bottom: 0, marginRight: 16, marginBottom: 8, flexDirection: "row"}}>
+            <View style={modalFilter.buttonsContainer}>
               <TouchableHighlight
-                style={{marginRight: 8, height: 40, justifyContent: "center"}}
+                style={modalFilter.buttonClear}
                 underlayColor="rgba(255, 255, 255, 0.5)"
                 onPress={() => this.clearFilters()}>
                 <Text>CLEAR</Text>
               </TouchableHighlight>
               <TouchableHighlight
-                style={{height: 40, justifyContent: "center"}}
+                style={modalFilter.buttonFilter}
                 underlayColor="rgba(255, 255, 255, 0.5)"
-                onPress={() => console.log("Pressed")}>
+                onPress={() => this.filter()}>
                 <Text>FILTER</Text>
               </TouchableHighlight>
             </View>
@@ -158,5 +175,32 @@ const mapStateToProps = (store) => {
     jobs: store.jobs
   }
 }
+
+const styles = StyleSheet.create({
+  skill: {
+    borderWidth: 1,
+    fontWeight: "bold",
+    margin: 4,
+    padding: 4
+  },
+  normal: {
+    borderWidth: 1,
+    fontWeight: "bold",
+    margin: 4,
+    padding: 4,
+    borderColor: "#51abe4",
+    backgroundColor: "white",
+    color: "#51abe4",
+  },
+  selected: {
+    borderWidth: 1,
+    fontWeight: "bold",
+    margin: 4,
+    padding: 4,
+    borderColor: "white",
+    backgroundColor: "#51abe4",
+    color: "white",
+  }
+});
 
 export default connect(mapStateToProps)(FilterModal);
